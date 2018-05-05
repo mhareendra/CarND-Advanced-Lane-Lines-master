@@ -19,15 +19,15 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./output_images/AnnotatedImage.png "Annotated"
-[image2]: ./output_images/DetectedLanes.png "Detected lanes"
-[image3]: ./output_images/Histogram.png "Histogram"
-[image4]: ./output_images/PipelineResult.png "Pipeline"
-[image5]: ./output_images/ThresholdingContribution.png "Thresholding contributions"
-[image6]: ./output_images/Undistorted.png "Undistorted"
-[image7]: ./output_images/WarpedBinaryImage.png "Warped binary image"
+[image1]: ./output_images/AnnotatedImage.PNG "Annotated"
+[image2]: ./output_images/DetectedLanes.PNG "Detected lanes"
+[image3]: ./output_images/Histogram.PNG "Histogram"
+[image4]: ./output_images/PipelineResult.PNG "Pipeline"
+[image5]: ./output_images/ThresholdingContribution.PNG "Thresholding contributions"
+[image6]: ./output_images/Undistorted.PNG "Undistorted"
+[image7]: ./output_images/WarpedBinaryImage.PNG "Warped binary image"
 [image8]: ./output_images/WarpedImage.jpg "Warped image"
-[image9]: ./output_images/UndistortedRoad.png "Undistorted Road"
+[image9]: ./output_images/UndistortedRoad.PNG "Undistorted Road"
 [image10]: ./output_images/test5.jpg "distorted Road"
 
 [video1]: ./project_video_output.mp4 "Video"
@@ -60,7 +60,9 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 
 To demonstrate this step, I will describe how I apply the distortion correction to the test image
 For example, the following images show a test image and its undistorted image:
+
 ![alt text][image10]
+
 ![alt text][image9]
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
