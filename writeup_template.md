@@ -29,6 +29,7 @@ The goals / steps of this project are the following:
 [image8]: ./output_images/WarpedImage.jpg "Warped image"
 [image9]: ./output_images/UndistortedRoad.PNG "Undistorted Road"
 [image10]: ./output_images/test5.jpg "distorted Road"
+[image11]: ./output_images/Radius_curvature_formula.PNG "Radius of Curvature"
 
 [video1]: ./project_video_output.mp4 "Video"
 
@@ -46,7 +47,7 @@ The goals / steps of this project are the following:
 
 #### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
 
-The code for this step is contained in cell 2 of the IPython notebook located in "./examples/example.ipynb"
+The code for this step is contained in cell 2 of the IPython notebook "AdvLaneDetection_P4.ipynb"
 
 I start by preparing "objpoints", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners (using cv2.findChessboardCorners) in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
 
@@ -67,7 +68,7 @@ For example, the following images show a test image and its undistorted image:
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-I used a combination of color and gradient thresholds in the pipeline() function to generate a binary image. 
+I used a combination of color and gradient thresholds in the pipeline() (cell 6) function to generate a binary image. 
 The input image is first converted to grayscale and then horizontal sobel + scaled sobel thresholds are applied.
 The input image is then converted to HLS color space and the s channel is thresholded using appropriately chosen thresholds to produce a binary image that is later combined with the previous binary image.
 Here's an example of my output for this step.  
@@ -80,49 +81,51 @@ This image shows the contribution of each thresholding method:
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
-The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
-
-```python
-src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
-dst = np.float32(
-    [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), 0]])
-```
+The code for my perspective transform includes a function called `perspective_transformation()`, which appears in cell 12 of the IPython notebook).  This function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points. It also takes the calibration coeffecients that are loaded from the saved pickle file. I chose the hardcode the source and destination points so as to represent the lane region of interest excluding the hood of the car. 
 
 This resulted in the following source and destination points:
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 585, 460      | 320, 0        | 
-| 203, 720      | 320, 720      |
-| 1127, 720     | 960, 720      |
-| 695, 460      | 960, 0        |
+| 543, 480      | 300, 0        | 
+| 307, 645      | 300, 700      |
+| 1003, 645     | 900, 700      |
+| 730, 480      | 900, 0        |
 
-I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
+I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image. This was tested on both binary and color images.
 
-![alt text][image4]
+![alt text][image8]
+
+![alt text][image7]
+
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
-Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
+The lane-line pixels are identified in find_lines() in cell 16 of the notebook. This method takes as input the binary warped image and computes histograms across columns in multiple sliding windows throughout the image. The peaks in the histograms are then analyzed to decide on the lane-line pixels. The first peak is assumed to be the left lane-line and the next peak, the right lane-line. The location of the lane-lines in the current window contributes towards the initial search position in the next window.
 
-![alt text][image5]
+Then I fit my lane lines with a 2nd order polynomial to approixmate a complete line:
+
+![alt text][image2]
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I did this in lines # through # in my code in `my_other_file.py`
+The metrics - radius of curvature and offset from center, are computed in the Metrics section of the IPython notebook. 
+'get_radius_of_curvature()' and 'get_offset()' are the corresponding methods to compute these metrics in the real-world space.
+
+The radius of curvature computation uses the following information:
+
+![alt_text][image11]
+
+The offset from center computation uses the lane-line approximations from polyfit for the left and right lines to compute the center of the lane. The center of the camera (image) is assumed to be the center of the vehicle and so the difference in the centers of the lane region and the vehicle gives us the required number.
+
+To convert to real-world space I assume 30 meters per 720 pixels in the vertical direction and 3.7 meters per 700 pixels in the horizontal direction. 
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
+The detected lane region is drawn onto the original image using the warp_and_draw_lines() method in cell 25.
+The computed numbers are added to the image using the annotate_image() method in cell 27 
 
-![alt text][image6]
+![alt text][image1]
 
 ---
 
@@ -130,12 +133,22 @@ I implemented this step in lines # through # in my code in `yet_another_file.py`
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./project_video.mp4)
+All the above steps are used to generate the below video output (process_image() in cell 30). An improvement to the lane detection in video frames was the addition of a moving average filter that uses lane-lines data from the previous 5 frames to decide whether the lane data for the current frame is valid. If invalid, the data from the previous frame is used.  
 
+Here's a [link to my video result](./project_video_output.mp4)
 ---
 
 ### Discussion
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+I initially faced problems with false positives when illumination and the road conditions changed. This was expected because a threshold empirically deduced using a few images will not be applicable to all possible cases since it is heavily dependent on illumination. Also, when new objects (other cars) entered the region of interest, they introduced false spikes in the histogram that also generated bad data. 
+To overcome these problems, I implemented a moving average filter that uses data from previous frames to decide if the current data is good or bad.
+
+A minor problem I faced was with the need to keep track of the calibration coeffecients for use later on. I used a pickle file to solve this issue.
+
+I expect this approach to fail in the following conditions:
+1. Other objects enter the lane region
+2. Shape of lane lines changes frequently in small intervals
+3. Vehicles in close proximity block view of lane lines
+4. Bad visiblity and Illumination
