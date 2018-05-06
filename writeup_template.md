@@ -1,7 +1,5 @@
 ## Writeup Template
 
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
 ---
 
 **Advanced Lane Finding Project**
@@ -26,7 +24,7 @@ The goals / steps of this project are the following:
 [image5]: ./output_images/ThresholdingContribution.PNG "Thresholding contributions"
 [image6]: ./output_images/Undistorted.PNG "Undistorted"
 [image7]: ./output_images/WarpedBinaryImage.PNG "Warped binary image"
-[image8]: ./output_images/WarpedImage.jpg "Warped image"
+[image8]: ./output_images/WarpedImage.PNG "Warped image"
 [image9]: ./output_images/UndistortedRoad.PNG "Undistorted Road"
 [image10]: ./output_images/test5.jpg "distorted Road"
 [image11]: ./output_images/Radius_curvature_formula.PNG "Radius of Curvature"
@@ -152,3 +150,4 @@ I expect this approach to fail in the following conditions:
 2. Shape of lane lines changes frequently in small intervals
 3. Vehicles in close proximity block view of lane lines
 4. Bad visiblity and Illumination
+5. Calibration coeffecients become invalid because of distortion from windshield for cases when camera is inside the car 
